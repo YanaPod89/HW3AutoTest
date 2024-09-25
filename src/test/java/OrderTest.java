@@ -157,7 +157,7 @@ public class OrderTest {
         form.$("[data-test-id=name] input").setValue("Яна Подольская");
 
         SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("89137893070");
+        form2.$("[data-test-id=phone] input").setValue("+79137893070");
 
         $("[data-test-id=agreement]").click();
 
