@@ -2,6 +2,7 @@ import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Selenide.*;
 
 public class OrderTest {
@@ -10,11 +11,9 @@ public class OrderTest {
     void shouldTest() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Яна Подольская");
+        $("[data-test-id=name] input").setValue("Яна Подольская");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("+79137893070");
+        $("[data-test-id=phone] input").setValue("+79137893070");
 
         $("[data-test-id=agreement]").click();
 
@@ -27,17 +26,15 @@ public class OrderTest {
     void shouldTestNameEnglishLetters() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Iana");
+        $("[data-test-id=name] input").setValue("Iana");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("+79137893070");
+        $("[data-test-id=phone] input").setValue("+79137893070");
 
         $("[data-test-id=agreement]").click();
 
         $(".button__content").click();
 
-        $("[data-test-id=name] .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+        $("[data-test-id='name'].input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
 
     }
 
@@ -45,17 +42,15 @@ public class OrderTest {
     void shouldTestNameNumber() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Яна Подольская15");
+        $("[data-test-id=name] input").setValue("Яна Подольская15");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("+79137893070");
+        $("[data-test-id=phone] input").setValue("+79137893070");
 
         $("[data-test-id=agreement]").click();
 
         $(".button__content").click();
 
-        $("[data-test-id=name] .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
 
     }
 
@@ -63,108 +58,144 @@ public class OrderTest {
     void shouldTestNameSymbols() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Яна Подольская%");
+        $("[data-test-id=name] input").setValue("Яна Подольская%");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("+79137893070");
+        $("[data-test-id=phone] input").setValue("+79137893070");
 
         $("[data-test-id=agreement]").click();
 
         $(".button__content").click();
 
-        $("[data-test-id=name] .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
 
     }
 
     @Test
-    void shouldNameTestPhoneSymbols() {
+    void shouldNameTestEmptyLine() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Яна Подольская");
+        $("[data-test-id=name] input").setValue("");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("++79137893070");
+        $("[data-test-id=phone] input").setValue("+79137893070");
 
         $("[data-test-id=agreement]").click();
 
         $(".button__content").click();
 
-        $("[data-test-id=phone] .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
 
     }
 
     @Test
-    void shouldNameTestPhoneMoreNumbers() {
+    void shouldTestPhoneSymbols() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Яна Подольская");
+        $("[data-test-id=name] input").setValue("Яна Подольская");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("+791378930700");
+        $("[data-test-id=phone] input").setValue("++79137893070");
 
         $("[data-test-id=agreement]").click();
 
         $(".button__content").click();
 
-        $("[data-test-id=phone] .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
 
     @Test
-    void shouldNameTestPhoneLessNumbers() {
+    void shouldTestPhoneMoreNumbers() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Яна Подольская");
+        $("[data-test-id=name] input").setValue("Яна Подольская");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("+7913789307");
+        $("[data-test-id=phone] input").setValue("+791378930700");
 
         $("[data-test-id=agreement]").click();
 
         $(".button__content").click();
 
-        $("[data-test-id=phone] .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
 
     @Test
-    void shouldNameTestPhoneSpace() {
+    void shouldTestPhoneLessNumbers() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Яна Подольская");
+        $("[data-test-id=name] input").setValue("Яна Подольская");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("+7913 893070");
+        $("[data-test-id=phone] input").setValue("+7913789307");
 
         $("[data-test-id=agreement]").click();
 
         $(".button__content").click();
 
-        $("[data-test-id=phone] .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
 
     @Test
-    void shouldNameTestNumberInsteadPlus() {
+    void shouldTestPhoneSpace() {
         open("http://localhost:9999");
 
-        SelenideElement form = $("[data-test-id=name]");
-        form.$("[data-test-id=name] input").setValue("Яна Подольская");
+        $("[data-test-id=name] input").setValue("Яна Подольская");
 
-        SelenideElement form2 = $("[data-test-id=phone]");
-        form2.$("[data-test-id=phone] input").setValue("89137893070");
+        $("[data-test-id=phone] input").setValue("+7913 893070");
 
         $("[data-test-id=agreement]").click();
 
         $(".button__content").click();
 
-        $("[data-test-id=phone] .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
+
+    @Test
+    void shouldTestPhoneNumberInsteadPlus() {
+        open("http://localhost:9999");
+
+        $("[data-test-id=name] input").setValue("Яна Подольская");
+
+        $("[data-test-id=phone] input").setValue("89137893070");
+
+        $("[data-test-id=agreement]").click();
+
+        $(".button__content").click();
+
+        $("[data-test-id=phone].input_invalid .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+
+    }
+
+    @Test
+    void shouldTestPhoneEmptyLine() {
+        open("http://localhost:9999");
+
+        $("[data-test-id=name] input").setValue("Яна Подольская");
+
+        $("[data-test-id=phone] input").setValue("");
+
+        $("[data-test-id=agreement]").click();
+
+        $(".button__content").click();
+
+        $("[data-test-id=phone].input_invalid .input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
+
+    }
+
+    @Test
+    void shouldTestCheckBox() {
+        open("http://localhost:9999");
+
+        $("[data-test-id=name] input").setValue("Яна Подольская");
+
+        $("[data-test-id=phone] input").setValue("+79137893070");
+
+        //$("[data-test-id=agreement]").click();
+
+        $(".button__content").click();
+
+        $("[data-test-id=agreement].input_invalid .checkbox__box").should(exist);
+
+    }
+
 }
-
